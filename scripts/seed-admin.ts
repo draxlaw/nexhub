@@ -5,16 +5,18 @@ import mongoose from 'mongoose';
 import User from '../src/models/User.model';
 import Category from '../src/models/Category.model';
 
-async function seed() {
+async function seedAdmin() {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/ecommerce');
-    console.log('Connected to MongoDB');
+    const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/ecommerce';
+    await mongoose.connect(mongoUri);
+    console.log('✓ Connected to MongoDB');
 
-    // Create admin user
-    const adminExists = await User.findOne({ email: 'walyise@example.com' });
+    // Create admin user if it doesn't exist
+    const adminEmail = 'walyise@example.com';
+    const adminExists = await User.findOne({ email: adminEmail });
     if (!adminExists) {
       const admin = await User.create({
-        email: 'walyise@example.com',
+        email: adminEmail,
         password: 'admin123456',
         name: 'Admin User',
         roles: ['admin'],
@@ -23,7 +25,7 @@ async function seed() {
       });
       console.log('✓ Admin user created:', admin.email);
     } else {
-      console.log('✓ Admin user already exists');
+      console.log('✓ Admin user already exists:', adminEmail);
     }
 
     // Create sample categories
@@ -35,27 +37,31 @@ async function seed() {
       { name: 'Books & Media', description: 'Books, movies, and music' },
     ];
 
-    for (const cat of categories) {
-      const exists = await Category.findOne({ name: cat.name });
+    for (const catData of categories) {
+      const exists = await Category.findOne({ name: catData.name });
       if (!exists) {
-        const category = await Category.create({
-          ...cat,
-          slug: cat.name.toLowerCase().replace(/\s+/g, '-'),
+        await Category.create({
+          name: catData.name,
+          description: catData.description,
+          slug: catData.name.toLowerCase().replace(/\s+/g, '-'),
         });
-        console.log('✓ Category created:', category.name);
+        console.log('✓ Category created:', catData.name);
+      } else {
+        console.log('✓ Category exists:', catData.name);
       }
     }
 
-    console.log('\n✓ Seeding complete!');
+    console.log('\n✓ Admin seeding complete!');
     console.log('\nTest credentials:');
-    console.log('Admin Email: walyise@example.com');
-    console.log('Admin Password: admin123456');
+    console.log('Email: walyise@example.com');
+    console.log('Password: admin123456');
 
     await mongoose.disconnect();
+    process.exit(0);
   } catch (error) {
-    console.error('Seeding failed:', error);
+    console.error('Error:', error);
     process.exit(1);
   }
 }
 
-seed();
+seedAdmin();

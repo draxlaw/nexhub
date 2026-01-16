@@ -52,8 +52,12 @@ const ProductSchema = new Schema<IProduct>(
     seoDescription: { type: String },
     seoKeywords: { type: [String] },
   },
-  { timestamps: true, indexes: [{ name: 1, category: 1 }, { vendor: 1, status: 1 }] },
+  { timestamps: true },
 );
+
+// Create compound indexes
+ProductSchema.index({ name: 1, category: 1 });
+ProductSchema.index({ vendor: 1, status: 1 });
 
 // Auto-calculate finalPrice when saving
 ProductSchema.pre<IProduct>('save', function () {
