@@ -9,7 +9,7 @@ import { connectDB, disconnectDB } from './config/database';
 
 
 
-const DEFAULT_PORT = process.env.PORT || '3000';
+const DEFAULT_PORT = process.env.PORT || '5000';
 
 function normalizePort(val: string | number) {
   const port = typeof val === 'string' ? parseInt(val, 10) : val;

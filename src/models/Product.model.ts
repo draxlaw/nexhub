@@ -13,6 +13,7 @@ export interface IProduct extends Document {
   vendor?: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId; // User who created (admin or vendor)
   stock: number;
+  sold: number;
   sku: string;
   images: string[];
   thumbnail?: string;
@@ -40,6 +41,7 @@ const ProductSchema = new Schema<IProduct>(
     vendor: { type: Schema.Types.ObjectId, ref: 'Vendor', index: true },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     stock: { type: Number, required: true, default: 0, min: 0 },
+    sold: { type: Number, default: 0, min: 0 },
     sku: { type: String, required: true, unique: true, uppercase: true },
     images: { type: [String], default: [] },
     thumbnail: { type: String },

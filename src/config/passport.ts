@@ -16,7 +16,16 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           if (!email) return done(null, false);
           let user = await User.findOne({ email });
           if (!user) {
-            user = await User.create({ email, name: profile.displayName, isEmailVerified: true });
+            // Split display name into firstName and lastName
+            const nameParts = (profile.displayName || '').split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            user = await User.create({ 
+              email, 
+              firstName, 
+              lastName, 
+              isEmailVerified: true 
+            });
           }
           done(null, user);
         } catch (err) {

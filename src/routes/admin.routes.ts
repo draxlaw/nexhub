@@ -41,4 +41,11 @@ router.patch('/categories/:categoryId/toggle-status', adminController.toggleCate
 router.get('/reports/vendor-performance', adminController.getVendorPerformance);
 router.get('/reports/top-products', adminController.getTopProducts);
 
+// ============ ORDER MANAGEMENT ============
+router.get('/orders', adminController.getAllOrders);
+router.get('/orders/stats', adminController.getOrderStats);
+router.get('/orders/:orderId', adminController.getOrderById);
+router.patch('/orders/:orderId/status', adminController.updateOrderStatusAdmin);
+router.post('/orders/:orderId/refund', adminController.processOrderRefund);
+
 export default router;

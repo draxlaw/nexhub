@@ -5,11 +5,21 @@ import crypto from 'crypto';
 import { sendEmail } from '../utils/sendEmail';
 import { ApiError } from '../utils/ApiError';
 
-export async function registerUser(email: string, password: string, name?: string) {
+interface RegisterData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  role?: 'customer' | 'vendor';
+}
+
+export async function registerUser(data: RegisterData) {
+  const { email, password, firstName, lastName, role = 'customer' } = data;
+
   const existing = await User.findOne({ email });
   if (existing) throw new ApiError(400, 'Email already in use');
 
-  const user = new User({ email, password, name });
+  const user = new User({ email, password, firstName, lastName, role });
 
   // email verification
   const verificationToken = crypto.randomBytes(32).toString('hex');

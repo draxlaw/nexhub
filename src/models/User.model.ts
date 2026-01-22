@@ -5,7 +5,9 @@ import crypto from 'crypto';
 export interface IUser extends Document {
   email: string;
   password: string;
-  name?: string;
+  firstName: string;
+  lastName: string;
+  role: 'customer' | 'vendor' | 'admin';
   roles: string[];
   isEmailVerified: boolean;
   emailVerifiedAt?: Date;
@@ -21,7 +23,9 @@ const UserSchema = new Schema<IUser>(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, select: false },
-    name: { type: String },
+    firstName: { type: String, required: true, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    role: { type: String, enum: ['customer', 'vendor', 'admin'], default: 'customer' },
     roles: { type: [String], default: ['user'] },
     isEmailVerified: { type: Boolean, default: false },
     emailVerifiedAt: { type: Date },

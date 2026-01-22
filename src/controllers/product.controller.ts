@@ -27,7 +27,7 @@ export async function createProduct(req: Request, res: Response, next: NextFunct
 
 export async function updateProduct(req: Request, res: Response, next: NextFunction) {
   try {
-    const { productId } = req.params;
+    const productId = req.params.productId as string;
     const user = (req as any).user;
     const isAdmin = user.roles.includes('admin');
 
@@ -40,7 +40,7 @@ export async function updateProduct(req: Request, res: Response, next: NextFunct
 
 export async function getProduct(req: Request, res: Response, next: NextFunction) {
   try {
-    const { productId } = req.params;
+    const productId = req.params.productId as string;
     const product = await productService.getProductById(productId);
     res.json({ success: true, product });
   } catch (err) {
@@ -71,7 +71,7 @@ export async function listProducts(req: Request, res: Response, next: NextFuncti
 
 export async function deleteProduct(req: Request, res: Response, next: NextFunction) {
   try {
-    const { productId } = req.params;
+    const productId = req.params.productId as string;
     const user = (req as any).user;
     const isAdmin = user.roles.includes('admin');
 
@@ -84,7 +84,7 @@ export async function deleteProduct(req: Request, res: Response, next: NextFunct
 
 export async function publishProduct(req: Request, res: Response, next: NextFunction) {
   try {
-    const { productId } = req.params;
+    const productId = req.params.productId as string;
     const user = (req as any).user;
     const isAdmin = user.roles.includes('admin');
 

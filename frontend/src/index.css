@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@theme {
+  --font-family-sans: 'Arial', 'Helvetica', sans-serif;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-family-sans);
+  }
+  
+  body {
+    @apply bg-amazon-light text-gray-900;
+  }
+
+  a {
+    @apply text-amazon-blue hover:text-amazon-blue-dark;
+  }
+}
+
+@layer components {
+  /* Amazon-style Buttons */
+  .btn-primary {
+    @apply bg-amazon-yellow text-black px-4 py-2 rounded-md font-semibold 
+           hover:bg-yellow-500 transition-all duration-200 shadow-sm
+           border border-yellow-600;
+  }
+
+  .btn-secondary {
+    @apply bg-amazon-light-2 text-gray-900 px-4 py-2 rounded-md font-semibold 
+           hover:bg-gray-200 transition-all duration-200 shadow-sm
+           border border-gray-400;
+  }
+
+  .btn-orange {
+    @apply bg-amazon-orange text-black px-4 py-2 rounded-md font-semibold 
+           hover:bg-orange-400 transition-all duration-200 shadow-sm
+           border border-orange-500;
+  }
+
+  .btn-green {
+    @apply bg-amazon-green text-white px-4 py-2 rounded-md font-semibold 
+           hover:bg-green-600 transition-all duration-200 shadow-sm;
+  }
+
+  /* Amazon-style Input */
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md 
+           shadow-sm focus:outline-none focus:ring-2 focus:ring-amazon-blue 
+           focus:border-amazon-blue transition-colors duration-200;
+  }
+
+  /* Amazon-style Card */
+  .amazon-card {
+    @apply bg-white rounded-md shadow-amazon p-4 hover:shadow-amazon-hover 
+           transition-shadow duration-200;
+  }
+
+  /* Amazon-style Link List */
+  .link-list-column {
+    @apply flex flex-col space-y-2;
+  }
+
+  .link-list-column a {
+    @apply text-sm text-white hover:underline cursor-pointer;
+  }
+
+  /* Rating Stars */
+  .rating-stars {
+    @apply flex text-amazon-yellow text-sm;
+  }
+
+  /* Price Tag */
+  .price-tag {
+    @apply text-lg font-bold text-amazon-red;
+  }
+
+  .price-original {
+    @apply text-sm text-gray-500 line-through;
+  }
+
+  .price-discount {
+    @apply text-sm text-amazon-red font-bold;
+  }
+
+  /* Badge Styles */
+  .badge {
+    @apply inline-flex items-center px-2 py-1 rounded-md text-xs font-bold;
+  }
+
+  .badge-green {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .badge-orange {
+    @apply bg-orange-100 text-orange-800;
+  }
+
+  .badge-red {
+    @apply bg-red-100 text-red-800;
+  }
+
+  /* Section Headers */
+  .section-header {
+    @apply text-xl font-bold text-gray-900 pb-2 border-b-2 border-amazon-light-2;
+  }
+
+  /* Page Background */
+  .page-container {
+    @apply min-h-screen bg-amazon-light;
+  }
+
+  /* Dropdown Menu */
+  .dropdown-menu {
+    @apply absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg 
+           py-1 z-50 border border-gray-200;
+  }
+
+  .dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Truncate text to specific lines */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

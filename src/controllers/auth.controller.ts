@@ -6,8 +6,8 @@ import { hashToken } from '../utils/generateToken';
 
 export async function register(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email, password, name } = req.body;
-    const user = await authService.registerUser(email, password, name);
+    const { email, password, firstName, lastName, role } = req.body;
+    const user = await authService.registerUser({ email, password, firstName, lastName, role });
     return res.status(201).json({ success: true, user });
   } catch (err) {
     console.log(err)
@@ -20,13 +20,16 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
     const { accessToken, refreshToken, user } = await authService.loginUser(email, password);
 
+    // Return both accessToken and token (alias) for frontend compatibility
+    const token = accessToken;
+
     // set httpOnly cookie if configured
     if (process.env.USE_REFRESH_TOKEN_COOKIE === 'true') {
       res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' });
-      return res.json({ success: true, accessToken, user });
+      return res.json({ success: true, accessToken, token, user });
     }
 
-    res.json({ success: true, accessToken, refreshToken, user });
+    res.json({ success: true, accessToken, token, refreshToken, user });
     return;
   } catch (err) {
     return next(err);

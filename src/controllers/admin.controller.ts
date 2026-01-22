@@ -3,7 +3,9 @@ import User from '../models/User.model';
 import Product from '../models/Product.model';
 import Vendor from '../models/Vendor.model';
 import Category from '../models/Category.model';
+import Order from '../models/Order.model';
 import { ApiError } from '../utils/ApiError';
+import * as orderService from '../services/order.service';
 
 // ============ USER MANAGEMENT ============
 
@@ -546,6 +548,149 @@ export async function getTopProducts(req: Request, res: Response, next: NextFunc
       .limit(Number(limit));
 
     res.json({ success: true, products });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ============ ORDER MANAGEMENT ============
+
+export async function getAllOrders(req: Request, res: Response, next: NextFunction) {
+  try {
+    const {
+      status,
+      paymentStatus,
+      paymentProvider,
+      userId,
+      startDate,
+      endDate,
+      minAmount,
+      maxAmount,
+      search,
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    const filters: any = {};
+    if (status) filters.status = status;
+    if (paymentStatus) filters.paymentStatus = paymentStatus;
+    if (paymentProvider) filters.paymentProvider = paymentProvider;
+    if (userId) filters.userId = userId;
+
+    // Validate and parse dates
+    if (startDate) {
+      const parsedStartDate = new Date(startDate as string);
+      if (isNaN(parsedStartDate.getTime())) {
+        return next(new ApiError(400, 'Invalid start date format'));
+      }
+      filters.startDate = parsedStartDate;
+    }
+    if (endDate) {
+      const parsedEndDate = new Date(endDate as string);
+      if (isNaN(parsedEndDate.getTime())) {
+        return next(new ApiError(400, 'Invalid end date format'));
+      }
+      filters.endDate = parsedEndDate;
+    }
+
+    if (minAmount) filters.minAmount = parseFloat(minAmount as string);
+    if (maxAmount) filters.maxAmount = parseFloat(maxAmount as string);
+    if (search) filters.search = search as string;
+
+    const result = await orderService.getAllOrders(
+      filters,
+      parseInt(page as string),
+      parseInt(limit as string),
+    );
+
+    res.json({
+      success: true,
+      ...result,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getOrderById(req: Request, res: Response, next: NextFunction) {
+  try {
+    const orderId = req.params.orderId as string;
+
+    const order = await orderService.getOrderForAdmin(orderId);
+
+    res.json({ success: true, order });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getOrderStats(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { startDate, endDate } = req.query;
+
+    let dateRange;
+    if (startDate && endDate) {
+      const parsedStartDate = new Date(startDate as string);
+      const parsedEndDate = new Date(endDate as string);
+
+      // Validate dates
+      if (isNaN(parsedStartDate.getTime())) {
+        return next(new ApiError(400, 'Invalid start date format'));
+      }
+      if (isNaN(parsedEndDate.getTime())) {
+        return next(new ApiError(400, 'Invalid end date format'));
+      }
+      if (parsedStartDate > parsedEndDate) {
+        return next(new ApiError(400, 'Start date must be before end date'));
+      }
+
+      dateRange = {
+        startDate: parsedStartDate,
+        endDate: parsedEndDate,
+      };
+    }
+
+    const stats = await orderService.getOrderStats(dateRange);
+
+    res.json({ success: true, stats });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateOrderStatusAdmin(req: Request, res: Response, next: NextFunction) {
+  try {
+    const orderId = req.params.orderId as string;
+    const { status, trackingNumber, notifyCustomer } = req.body;
+
+    const order = await orderService.updateOrderStatus(orderId, { status, trackingNumber });
+
+    // TODO: Send notification to customer if notifyCustomer is true
+
+    res.json({
+      success: true,
+      message: 'Order status updated successfully',
+      order,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function processOrderRefund(req: Request, res: Response, next: NextFunction) {
+  try {
+    const orderId = req.params.orderId as string;
+    const { amount, reason } = req.body;
+
+    const order = await orderService.processRefund(orderId, amount, reason);
+
+    // TODO: Send notification to customer
+
+    res.json({
+      success: true,
+      message: 'Order refunded successfully',
+      order,
+    });
   } catch (err) {
     next(err);
   }
